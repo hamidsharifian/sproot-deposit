@@ -4,15 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+import java.io.Serializable;
+import java.util.Date;
 
 @Getter
 @Setter
+@XmlType(name = "deposit", namespace = "http://www.tosan.com/hamid")
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "hamid_deposit")
 public class Deposit implements Serializable {

@@ -5,17 +5,20 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.PositiveOrZero;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "hamid_transaction")
 //@DataCache(enabled = false)
 //@DiscriminatorColumn(name="customer_type", discriminatorType = DiscriminatorType.INTEGER)
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@XmlType(name = "tsTransaction", namespace = "http://www.tosan.com/hamid")
+@XmlAccessorType(XmlAccessType.FIELD)
 @Getter
 @Setter
 public class TsTransaction implements Serializable {
@@ -47,6 +50,7 @@ public class TsTransaction implements Serializable {
     @Column(name = "source_id")
     private Long sourceId;
 
+    @XmlTransient
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "source_id", insertable = false, updatable = false, referencedColumnName = "did")
@@ -55,6 +59,7 @@ public class TsTransaction implements Serializable {
     @Column(name = "destination_id")
     private Long destinationId;
 
+    @XmlTransient
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "destination_id", insertable = false, updatable = false, referencedColumnName = "did")
