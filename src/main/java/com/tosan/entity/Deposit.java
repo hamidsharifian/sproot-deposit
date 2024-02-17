@@ -42,11 +42,27 @@ public class Deposit implements Serializable {
     private Date startDate;
     @Column(name = "end_date")
     private Date endDate;
+    @Column(name = "owner_id")
+    private Long ownerId;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name="owner_id", referencedColumnName = "cid")
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name="owner_id", referencedColumnName = "cid", updatable = false, insertable = false)
     private TsCustomer owner;
+
+    public void setOwnerId(Long ownerId) {
+        if(ownerId == null) {
+            this.ownerId = null;
+        }
+        this.ownerId = ownerId;
+    }
+
+    public void setOwner(TsCustomer owner) {
+        if(owner != null) {
+            this.ownerId = owner.getCid();
+        }
+        this.owner = owner;
+    }
 
     @Override
     public boolean equals(Object obj) {

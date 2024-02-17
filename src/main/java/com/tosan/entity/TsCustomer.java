@@ -73,7 +73,7 @@ public class TsCustomer implements Serializable {
 
     @XmlTransient
     @JsonIgnore
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private Set<Deposit> deposits = new HashSet<>();
 
     // LAZY is default

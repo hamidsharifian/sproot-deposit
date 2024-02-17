@@ -4,6 +4,7 @@ import com.tosan.entity.Deposit;
 import com.tosan.entity.TsTransaction;
 import com.tosan.repository.MyCustomerRepositoryImpl;
 import com.tosan.repository.MyDepositRepositoryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,9 @@ import java.util.List;
 public class DepositService {
     private final MyDepositRepositoryImpl depositRepository;
     private final MyCustomerRepositoryImpl customerRepository;
+
+    @Autowired
+    CustomerService customerService;
 
     public DepositService(MyDepositRepositoryImpl depositRepository, MyCustomerRepositoryImpl customerRepository) {
         this.depositRepository = depositRepository;
@@ -27,7 +31,7 @@ public class DepositService {
             throw new RuntimeException("Owner is not set for the requested open deposit!");
         }
         if(deposit.getOwner().getCid() == null) {
-            customerRepository.save(deposit.getOwner());
+            customerService.createCustomer(deposit.getOwner());
         }
         depositRepository.saveDeposit(deposit);
         return deposit;
