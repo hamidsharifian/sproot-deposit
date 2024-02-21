@@ -1,6 +1,9 @@
-package com.tosan.entity;
+package com.tosan;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tosan.entity.CustomerType;
+import com.tosan.entity.Deposit;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,10 +35,14 @@ public class TsCustomer implements Serializable {
     @Id
     //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TsCustomerSequenceGenerator")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cid")
+    //@Column(name = "cid")
     private Long cid;
 
-    @Column(name = "customer_code")
+    public TsCustomer() {
+
+    }
+
+    @Column(name = "customer_code", unique = true)
     private String customerCode;
 
     @NotNull(message = "firstName is required")
@@ -51,7 +58,7 @@ public class TsCustomer implements Serializable {
     private String fatherName;
     @NotNull(message = "nationalCode is required")
     @Size(min = 5, max = 5, message = "nationalCode must be exactly 5")
-    @Column(name = "national_code")
+    @Column(name = "national_code", unique = true)
     private String nationalCode;
 
     @Column(name = "address")
@@ -73,8 +80,19 @@ public class TsCustomer implements Serializable {
 
     @XmlTransient
     @JsonIgnore
-    @OneToMany(mappedBy = "owner", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToMany(mappedBy = "owner") //cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}
     private Set<Deposit> deposits = new HashSet<>();
+
+//    public TsCustomer() {  }
+
+    public TsCustomer(String firstName, String lastName, String fatherName, String nationalCode, CustomerType customerType) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.fatherName = fatherName;
+        this.nationalCode = nationalCode;
+        this.address = address;
+        this.customerType = customerType;
+    }
 
     // LAZY is default
     //@ElementCollection(fetch = FetchType.LAZY)

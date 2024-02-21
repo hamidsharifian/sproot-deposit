@@ -1,21 +1,18 @@
 package com.tosan.repository;
 
 
+import com.tosan.TsCustomer;
 import com.tosan.dto.CustomerFilterDto;
-import com.tosan.entity.*;
-import org.hibernate.Session;
-import org.hibernate.id.UUIDGenerator;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 @Repository
+//@DataJpaTest
 public class MyCustomerRepositoryImpl { //} implements MyCustomerRepository {
 
     @PersistenceContext
@@ -26,8 +23,10 @@ public class MyCustomerRepositoryImpl { //} implements MyCustomerRepository {
     }
 
     @Transactional
-    public void save(TsCustomer customer) {
+    public TsCustomer save(TsCustomer customer) {
+        //em.merge(customer);
         em.persist(customer);
+        return customer;
     }
 
     @Transactional
@@ -36,17 +35,18 @@ public class MyCustomerRepositoryImpl { //} implements MyCustomerRepository {
     }
 
     @Transactional
-    public void delete(Long cid) {
+    public int delete(Long cid) {
         String queryStr = "DELETE from TsCustomer c where c.cid = ?1";
         Query query = em.createQuery(queryStr);
         query.setParameter(1, cid);
-        query.executeUpdate();
+        return query.executeUpdate();
     }
 
     @Transactional(readOnly = true)
     public List<TsCustomer> findByStatus(boolean active) {
         String queryStr = "SELECT c from TsCustomer c where c.active = ?1";
         Query query = em.createQuery(queryStr, TsCustomer.class);
+        query.setParameter(1, active);
         return query.getResultList();
     }
     @Transactional(readOnly = true)

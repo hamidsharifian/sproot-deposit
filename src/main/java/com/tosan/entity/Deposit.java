@@ -1,5 +1,6 @@
 package com.tosan.entity;
 
+import com.tosan.TsCustomer;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -29,8 +30,8 @@ public class Deposit implements Serializable {
 
     @ColumnDefault(value = "0")
     private Long balance;
-    @Column(name = "deposit_number")
-    private Long depositNumber;
+    @Column(name = "deposit_number", unique = true)
+    private String depositNumber;
     private String currency;
     @Enumerated(EnumType.STRING)
     @Column(name = "deposit_type")

@@ -1,15 +1,11 @@
 package com.tosan.service;
 
 import com.tosan.dto.CustomerFilterDto;
-import com.tosan.entity.Deposit;
-import com.tosan.entity.TsCustomer;
-import com.tosan.entity.TsTransaction;
+import com.tosan.TsCustomer;
 import com.tosan.repository.MyCustomerRepositoryImpl;
 import com.tosan.repository.MyDepositRepositoryImpl;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service

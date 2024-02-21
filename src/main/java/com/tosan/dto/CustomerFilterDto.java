@@ -2,7 +2,9 @@ package com.tosan.dto;
 
 import com.tosan.entity.CustomerType;
 import com.tosan.entity.Deposit;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -15,6 +17,8 @@ import java.util.Set;
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomerFilterDto implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -1,9 +1,7 @@
 package com.tosan.facade;
 
 import com.tosan.AbstractRestHandler;
-import com.tosan.dto.CustomerFilterDto;
 import com.tosan.entity.Deposit;
-import com.tosan.entity.TsCustomer;
 import com.tosan.entity.TsTransaction;
 import com.tosan.service.CustomerService;
 import com.tosan.service.DepositService;
