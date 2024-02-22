@@ -3,6 +3,8 @@ package com.tosan.facade;
 import com.tosan.AbstractRestHandler;
 import com.tosan.entity.Deposit;
 import com.tosan.entity.TsTransaction;
+import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.DuplicateNationalCodeException;
 import com.tosan.service.CustomerService;
 import com.tosan.service.DepositService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,7 @@ public class DepositController extends AbstractRestHandler {
             produces = {"application/json", "application/xml"})
     @ResponseStatus(HttpStatus.OK)
     public Deposit openDeposit(@RequestBody Deposit deposit, HttpServletRequest request,
-                               HttpServletResponse response) {
+                               HttpServletResponse response) throws DuplicateNationalCodeException, CustomInvalidInputException {
         return this.depositService.openDeposit(deposit);
     }
 

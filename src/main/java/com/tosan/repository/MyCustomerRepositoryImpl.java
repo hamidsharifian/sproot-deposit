@@ -1,15 +1,21 @@
 package com.tosan.repository;
 
 
-import com.tosan.TsCustomer;
 import com.tosan.dto.CustomerFilterDto;
+import com.tosan.entity.TsCustomer;
+import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.DuplicateNationalCodeException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolationException;
+import java.rmi.server.ExportException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 //@DataJpaTest
@@ -22,10 +28,23 @@ public class MyCustomerRepositoryImpl { //} implements MyCustomerRepository {
         System.out.println("customMethod");
     }
 
-    @Transactional
-    public TsCustomer save(TsCustomer customer) {
+    @Transactional(rollbackFor = {DuplicateNationalCodeException.class, CustomInvalidInputException.class})
+    public TsCustomer save(TsCustomer customer) throws DuplicateNationalCodeException, CustomInvalidInputException {
         //em.merge(customer);
-        em.persist(customer);
+        try {
+            em.persist(customer);
+        } catch(PersistenceException ex) {
+            if(ex.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+                ((org.hibernate.exception.ConstraintViolationException) ex.getCause()).getConstraintName();//constraintViolationException.getConstraintName();
+                throw new DuplicateNationalCodeException("There's a user with this nationalCode.");
+            }
+            System.out.println(ex.getMessage());
+        } catch(ConstraintViolationException ex) {
+            List<String> messages = ex.getConstraintViolations().stream().map(cv ->
+                    cv.getPropertyPath().toString() + " " + cv.getMessage()
+            ).collect(Collectors.toList());
+            throw new CustomInvalidInputException("Some parameters are invalid", messages);
+        }
         return customer;
     }
 

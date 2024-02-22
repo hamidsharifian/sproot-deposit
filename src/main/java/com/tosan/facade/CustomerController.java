@@ -3,7 +3,9 @@ package com.tosan.facade;
 import com.tosan.AbstractRestHandler;
 import com.tosan.dto.CustomerFilterDto;
 import com.tosan.entity.Deposit;
-import com.tosan.TsCustomer;
+import com.tosan.entity.TsCustomer;
+import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.DuplicateNationalCodeException;
 import com.tosan.service.CustomerService;
 import com.tosan.service.DepositService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ public class CustomerController extends AbstractRestHandler {
             produces = {"application/json", "application/xml"})
     @ResponseStatus(HttpStatus.CREATED)
     public void createCustomer(@RequestBody TsCustomer tsCustomer,
-                            HttpServletRequest request, HttpServletResponse response) {
+                            HttpServletRequest request, HttpServletResponse response) throws DuplicateNationalCodeException, CustomInvalidInputException {
         this.customerService.createCustomer(tsCustomer);
         response.setHeader("Location", request.getRequestURL().append("/").append(tsCustomer.getCid()).toString());
     }
@@ -49,7 +51,7 @@ public class CustomerController extends AbstractRestHandler {
             produces = {"application/json", "application/xml"})
     @ResponseStatus(HttpStatus.OK)
     public void updateCustomer(@PathVariable("id") Long id, @RequestBody TsCustomer tsCustomer,
-                               HttpServletRequest request, HttpServletResponse response) {
+                               HttpServletRequest request, HttpServletResponse response) throws DuplicateNationalCodeException, CustomInvalidInputException {
         //checkResourceFound(this.customerService.getCustomer(id));
         this.customerService.updateCustomer(id, tsCustomer);
     }

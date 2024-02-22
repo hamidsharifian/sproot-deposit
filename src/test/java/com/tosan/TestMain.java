@@ -3,6 +3,7 @@ package com.tosan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.tosan.entity.TsCustomer;
 import com.tosan.facade.CustomerController;
 import org.junit.Test;
 import org.junit.runner.RunWith;

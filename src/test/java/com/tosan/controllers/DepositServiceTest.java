@@ -4,6 +4,8 @@ import com.tosan.entity.Deposit;
 import com.tosan.entity.DepositStatus;
 import com.tosan.entity.DepositType;
 import com.tosan.entity.TsTransaction;
+import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.DuplicateNationalCodeException;
 import com.tosan.facade.CustomerController;
 import com.tosan.repository.MyCustomerRepositoryImpl;
 import com.tosan.repository.MyDepositRepositoryImpl;
@@ -72,7 +74,7 @@ public class DepositServiceTest {
     }
 
     @Test
-    public void openDeposit() {
+    public void openDeposit() throws DuplicateNationalCodeException, CustomInvalidInputException {
         Deposit deposit = new Deposit();
         deposit.setDepositNumber("123456");
         deposit.setDepositStatus(DepositStatus.OPEN);

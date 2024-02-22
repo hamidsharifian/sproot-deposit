@@ -1,6 +1,5 @@
 package com.tosan.entity;
 
-import com.tosan.TsCustomer;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;

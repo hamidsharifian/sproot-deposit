@@ -1,5 +1,6 @@
 package com.tosan.facade;
 
+import com.tosan.exceptions.DuplicateNationalCodeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({ConstraintViolationException.class})
+    @ExceptionHandler({DuplicateNationalCodeException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Object> handleConstraintViolationException(
             ConstraintViolationException e) {

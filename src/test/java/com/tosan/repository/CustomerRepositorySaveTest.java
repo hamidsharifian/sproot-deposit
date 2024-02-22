@@ -1,19 +1,18 @@
 package com.tosan.repository;
 
-import com.tosan.TsCustomer;
+import com.tosan.entity.TsCustomer;
 import com.tosan.dto.CustomerFilterDto;
 import com.tosan.entity.CustomerType;
-import com.tosan.entity.Deposit;
-import com.tosan.repository.MyCustomerRepositoryImpl;
+import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.DuplicateNationalCodeException;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Query;
 import java.util.*;
 
 import static org.mockito.Mockito.verify;
@@ -21,7 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class CustomerRepositoryTest {
+@FixMethodOrder(MethodSorters.DEFAULT)
+public class CustomerRepositorySaveTest {
     @Autowired
     MyCustomerRepositoryImpl customerRepository;
 
@@ -32,12 +32,33 @@ public class CustomerRepositoryTest {
         // This test passes if the application context loads without errors
     }
     
-    @Test(expected = DataIntegrityViolationException.class)
-    public void testSave() {
+    @Test
+    public void testSave() throws DuplicateNationalCodeException, CustomInvalidInputException {
         TsCustomer customer = new TsCustomer();
         customer.setFirstName("Hamid");
         customer.setLastName("Sharifian");
         customer.setNationalCode("93412");
+        customer.setCustomerType(CustomerType.REAL);
+        customer.setCustomerCode("924212");
+        customerRepository.save(customer);
+    }
+    @Test(expected = DuplicateNationalCodeException.class)
+    public void testSave_duplicationNationalCode() throws DuplicateNationalCodeException, CustomInvalidInputException {
+        TsCustomer customer = new TsCustomer();
+        customer.setFirstName("Hamid");
+        customer.setLastName("Sharifian");
+        //customer.setNationalCode("12345");
+        customer.setCustomerType(CustomerType.REAL);
+        customer.setCustomerCode("924212");
+        customerRepository.save(customer);
+    }
+
+    @Test(expected = CustomInvalidInputException.class)
+    public void testSave_customInvalidInputException() throws DuplicateNationalCodeException, CustomInvalidInputException {
+        TsCustomer customer = new TsCustomer();
+        customer.setFirstName("Hamid");
+        customer.setLastName("Sharifian");
+        customer.setNationalCode("12348");
         customer.setCustomerType(CustomerType.REAL);
         customer.setCustomerCode("924212");
         customerRepository.save(customer);

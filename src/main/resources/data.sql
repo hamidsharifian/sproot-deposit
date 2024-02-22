@@ -1,0 +1,3 @@
+select 1;
+INSERT INTO `hamid_customer` (`cid`, `active`, `address`, `customer_code`, `customer_type`, `email`, `father_name`, `first_name`, `last_name`, `national_code`, `phone`, `postal_code`) VALUES (NULL, b'0000', 'Somewhere', '123', 'REAL', 'yechizi@somemail.com', 'theFather', 'hisFirstName', 'hisLastName', '12345', NULL, NULL);
+INSERT INTO `hamid_customer` (`cid`, `active`, `address`, `customer_code`, `customer_type`, `email`, `father_name`, `first_name`, `last_name`, `national_code`, `phone`, `postal_code`) VALUES (NULL, b'0000', 'Tehran', '234', 'REAL', 'personel@tosan.com', 'father_name', 'personel', 'family', '02585', NULL, NULL);

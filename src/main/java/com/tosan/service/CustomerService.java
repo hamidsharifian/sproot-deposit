@@ -1,7 +1,9 @@
 package com.tosan.service;
 
 import com.tosan.dto.CustomerFilterDto;
-import com.tosan.TsCustomer;
+import com.tosan.entity.TsCustomer;
+import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.DuplicateNationalCodeException;
 import com.tosan.repository.MyCustomerRepositoryImpl;
 import com.tosan.repository.MyDepositRepositoryImpl;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class CustomerService {
         this.depositRepository = depositRepository;
     }
 
-    public void createCustomer(TsCustomer tsCustomer) {
+    public void createCustomer(TsCustomer tsCustomer) throws DuplicateNationalCodeException, CustomInvalidInputException {
         customerRepository.save(tsCustomer);
     }
 
@@ -30,7 +32,7 @@ public class CustomerService {
         return customerRepository.findByStatus(active);
     }
 
-    public void updateCustomer(Long id, TsCustomer tsCustomer) {
+    public void updateCustomer(Long id, TsCustomer tsCustomer) throws DuplicateNationalCodeException, CustomInvalidInputException {
         customerRepository.save(tsCustomer);
     }
 

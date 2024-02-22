@@ -2,6 +2,8 @@ package com.tosan.service;
 
 import com.tosan.entity.Deposit;
 import com.tosan.entity.TsTransaction;
+import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.DuplicateNationalCodeException;
 import com.tosan.repository.MyCustomerRepositoryImpl;
 import com.tosan.repository.MyDepositRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ public class DepositService {
         return depositRepository.findDeposits(customerId);
     }
 
-    public Deposit openDeposit(Deposit deposit) {
+    public Deposit openDeposit(Deposit deposit) throws DuplicateNationalCodeException, CustomInvalidInputException {
         if(deposit.getOwner() == null) {
             throw new RuntimeException("Owner is not set for the requested open deposit!");
         }
