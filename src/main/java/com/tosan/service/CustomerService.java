@@ -3,7 +3,9 @@ package com.tosan.service;
 import com.tosan.dto.CustomerFilterDto;
 import com.tosan.entity.TsCustomer;
 import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.CustomerHasDepositException;
 import com.tosan.exceptions.DuplicateNationalCodeException;
+import com.tosan.exceptions.TosanGeneralException;
 import com.tosan.repository.MyCustomerRepositoryImpl;
 import com.tosan.repository.MyDepositRepositoryImpl;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,7 @@ public class CustomerService {
         customerRepository.save(tsCustomer);
     }
 
-    public void deleteCustomer(Long id) {
+    public void deleteCustomer(Long id) throws TosanGeneralException, CustomerHasDepositException {
         customerRepository.delete(id);
     }
 

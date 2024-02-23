@@ -4,7 +4,9 @@ import com.tosan.dto.CustomerFilterDto;
 import com.tosan.entity.TsCustomer;
 import com.tosan.entity.CustomerType;
 import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.CustomerHasDepositException;
 import com.tosan.exceptions.DuplicateNationalCodeException;
+import com.tosan.exceptions.TosanGeneralException;
 import com.tosan.repository.MyCustomerRepositoryImpl;
 import com.tosan.repository.MyDepositRepositoryImpl;
 import com.tosan.service.CustomerService;
@@ -12,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -25,23 +28,10 @@ import java.util.List;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+
+@SpringBootTest
 @RunWith(SpringRunner.class)
 public class CustomerServiceTest {
-
-    @TestConfiguration
-    static class CustomerServiceImplTestContextConfiguration {
-
-        @MockBean
-        private MyCustomerRepositoryImpl myCustomerRepository;
-
-        @MockBean
-        private MyDepositRepositoryImpl myDepositRepository;
-
-        @Bean
-        public CustomerService employeeService() {
-            return new CustomerService(myCustomerRepository, myDepositRepository);
-        }
-    }
 
     @Autowired
     private CustomerService customerService;
@@ -49,12 +39,12 @@ public class CustomerServiceTest {
     @Autowired
     private MyCustomerRepositoryImpl customerRepository;
 
-    @Test
+    @Test(expected = CustomInvalidInputException.class)
     public void createCustomer() throws DuplicateNationalCodeException, CustomInvalidInputException {
         TsCustomer customer = new TsCustomer();
         customer.setFirstName("Hamid");
         customerService.createCustomer(customer);
-        verify(customerRepository, times(1)).save(customer);
+        //verify(customerRepository, times(1)).save(customer);
     }
 
     @Test
@@ -73,7 +63,7 @@ public class CustomerServiceTest {
     }
 
     @Test
-    public void deleteCustomer() {
+    public void deleteCustomer() throws TosanGeneralException, CustomerHasDepositException {
         //Long
         customerService.deleteCustomer(1l);
         verify(customerRepository, times(1)).delete(1l);

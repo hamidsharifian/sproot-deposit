@@ -4,7 +4,9 @@ package com.tosan.repository;
 import com.tosan.dto.CustomerFilterDto;
 import com.tosan.entity.TsCustomer;
 import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.CustomerHasDepositException;
 import com.tosan.exceptions.DuplicateNationalCodeException;
+import com.tosan.exceptions.TosanGeneralException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolationException;
 import java.rmi.server.ExportException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,12 +56,26 @@ public class MyCustomerRepositoryImpl { //} implements MyCustomerRepository {
         return em.merge(customer);
     }
 
-    @Transactional
-    public int delete(Long cid) {
-        String queryStr = "DELETE from TsCustomer c where c.cid = ?1";
-        Query query = em.createQuery(queryStr);
-        query.setParameter(1, cid);
-        return query.executeUpdate();
+    @Transactional(rollbackFor = {CustomerHasDepositException.class, TosanGeneralException.class})
+    public int delete(Long cid) throws CustomerHasDepositException, TosanGeneralException {
+        try {
+            String queryStr = "DELETE from TsCustomer c where c.cid = ?1";
+            Query query = em.createQuery(queryStr);
+            query.setParameter(1, cid);
+            return query.executeUpdate();
+        } catch (Exception pex) {
+            try {
+                org.hibernate.exception.ConstraintViolationException cause =
+                        (org.hibernate.exception.ConstraintViolationException) pex.getCause();
+                SQLIntegrityConstraintViolationException sqlEx = (SQLIntegrityConstraintViolationException) cause.getSQLException();
+                if (sqlEx.getMessage().contains("Cannot delete or update")) {
+                    throw new CustomerHasDepositException("Customers who have deposit cannot be deleted");
+                }
+            } catch(CustomerHasDepositException chde) {
+                throw chde;
+            } catch(Exception ex) { }
+            throw new TosanGeneralException("An error occured, contact the administrator");
+        }
     }
 
     @Transactional(readOnly = true)

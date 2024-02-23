@@ -5,7 +5,9 @@ import com.tosan.dto.CustomerFilterDto;
 import com.tosan.entity.Deposit;
 import com.tosan.entity.TsCustomer;
 import com.tosan.exceptions.CustomInvalidInputException;
+import com.tosan.exceptions.CustomerHasDepositException;
 import com.tosan.exceptions.DuplicateNationalCodeException;
+import com.tosan.exceptions.TosanGeneralException;
 import com.tosan.service.CustomerService;
 import com.tosan.service.DepositService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +63,7 @@ public class CustomerController extends AbstractRestHandler {
             produces = {"application/json", "application/xml"})
     @ResponseStatus(HttpStatus.OK)
     public void deleteCustomer(@PathVariable("id") Long id, HttpServletRequest request,
-                               HttpServletResponse response) {
+                               HttpServletResponse response) throws TosanGeneralException, CustomerHasDepositException {
         this.customerService.deleteCustomer(id);
     }
 

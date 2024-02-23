@@ -1,3 +1,5 @@
 select 1;
 INSERT INTO `hamid_customer` (`cid`, `active`, `address`, `customer_code`, `customer_type`, `email`, `father_name`, `first_name`, `last_name`, `national_code`, `phone`, `postal_code`) VALUES (NULL, b'0000', 'Somewhere', '123', 'REAL', 'yechizi@somemail.com', 'theFather', 'hisFirstName', 'hisLastName', '12345', NULL, NULL);
 INSERT INTO `hamid_customer` (`cid`, `active`, `address`, `customer_code`, `customer_type`, `email`, `father_name`, `first_name`, `last_name`, `national_code`, `phone`, `postal_code`) VALUES (NULL, b'0000', 'Tehran', '234', 'REAL', 'personel@tosan.com', 'father_name', 'personel', 'family', '02585', NULL, NULL);
+
+INSERT INTO `hamid_deposit` (`did`, `balance`, `currency`, `deposit_number`, `deposit_status`, `deposit_type`, `end_date`, `owner_id`, `start_date`) VALUES (NULL, '0', 'IRR', '323433', 'OPEN', 'SAVING', NULL, (select cid from `hamid_customer` where `national_code` = '12345'), NULL);
