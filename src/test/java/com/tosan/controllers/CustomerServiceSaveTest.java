@@ -8,22 +8,13 @@ import com.tosan.exceptions.CustomerHasDepositException;
 import com.tosan.exceptions.DuplicateNationalCodeException;
 import com.tosan.exceptions.TosanGeneralException;
 import com.tosan.repository.MyCustomerRepositoryImpl;
-import com.tosan.repository.MyDepositRepositoryImpl;
 import com.tosan.service.CustomerService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,7 +22,7 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class CustomerServiceTest {
+public class CustomerServiceSaveTest {
 
     @Autowired
     private CustomerService customerService;
