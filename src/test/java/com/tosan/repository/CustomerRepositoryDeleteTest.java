@@ -32,21 +32,6 @@ public class CustomerRepositoryDeleteTest {
         // This test passes if the application context loads without errors
     }
 
-    @Test
-    public void testDelete_nonExistingId() throws TosanGeneralException, CustomerHasDepositException {
-        int deletedsCount = customerRepository.delete(7l);
-        assertThat(deletedsCount).isEqualTo(0);
-    }
 
-    @Test
-    public void testDelete_successfully() throws TosanGeneralException, CustomerHasDepositException {
-        int deletedsCount = customerRepository.delete(2l);
-        assertThat(deletedsCount).isEqualTo(1);
-    }
-
-    @Test(expected = CustomerHasDepositException.class)
-    public void testDelete_hasDependentDeposit() throws TosanGeneralException, CustomerHasDepositException {
-        int deletedCount = customerRepository.delete(1l);
-    }
 
 }

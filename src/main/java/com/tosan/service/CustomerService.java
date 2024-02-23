@@ -38,8 +38,8 @@ public class CustomerService {
         customerRepository.save(tsCustomer);
     }
 
-    public void deleteCustomer(Long id) throws TosanGeneralException, CustomerHasDepositException {
-        customerRepository.delete(id);
+    public int deleteCustomer(Long id) throws TosanGeneralException, CustomerHasDepositException {
+        return customerRepository.delete(id);
     }
 
     public void activate(Long customerId) {

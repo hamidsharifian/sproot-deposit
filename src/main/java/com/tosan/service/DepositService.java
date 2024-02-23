@@ -2,8 +2,7 @@ package com.tosan.service;
 
 import com.tosan.entity.Deposit;
 import com.tosan.entity.TsTransaction;
-import com.tosan.exceptions.CustomInvalidInputException;
-import com.tosan.exceptions.DuplicateNationalCodeException;
+import com.tosan.exceptions.*;
 import com.tosan.repository.MyCustomerRepositoryImpl;
 import com.tosan.repository.MyDepositRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +27,14 @@ public class DepositService {
         return depositRepository.findDeposits(customerId);
     }
 
-    public Deposit openDeposit(Deposit deposit) throws DuplicateNationalCodeException, CustomInvalidInputException {
-        if(deposit.getOwner() == null) {
-            throw new RuntimeException("Owner is not set for the requested open deposit!");
-        }
-        if(deposit.getOwner().getCid() == null) {
-            customerService.createCustomer(deposit.getOwner());
+    public Deposit openDeposit(Deposit deposit) throws DuplicateNationalCodeException, CustomInvalidInputException, DuplicateDepositException, CustomerRequiredException {
+        if(deposit.getOwnerId() == null) {
+            if(deposit.getOwner() == null) {
+                throw new CustomerRequiredException("Owner is not set for the requested open deposit!");
+            }
+            if(deposit.getOwner().getCid() == null) {
+                customerService.createCustomer(deposit.getOwner());
+            }
         }
         depositRepository.saveDeposit(deposit);
         return deposit;
@@ -51,7 +52,7 @@ public class DepositService {
         return depositRepository.withraw(depositId, amount);
     }
 
-    public TsTransaction deposit(Long depositId, Long amount) {
+    public TsTransaction deposit(Long depositId, Long amount) throws InsufficientBalanceException, DepositBlockedException, TransactionFailedException {
         return depositRepository.deposit(depositId, amount);
     }
 

@@ -3,6 +3,7 @@ package com.tosan.entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -29,19 +30,24 @@ public class Deposit implements Serializable {
 
     @ColumnDefault(value = "0")
     private Long balance;
+    @NaturalId
     @Column(name = "deposit_number", unique = true)
     private String depositNumber;
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
     @Enumerated(EnumType.STRING)
     @Column(name = "deposit_type")
     private DepositType depositType;
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "deposit_status")
+    @Column(name = "deposit_status", nullable = false)
     private DepositStatus depositStatus;
     @Column(name = "start_date")
     private Date startDate;
     @Column(name = "end_date")
     private Date endDate;
+
+    @NotNull
     @Column(name = "owner_id")
     private Long ownerId;
 

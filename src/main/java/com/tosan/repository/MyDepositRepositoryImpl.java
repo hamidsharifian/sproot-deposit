@@ -4,15 +4,19 @@ import com.tosan.entity.Deposit;
 import com.tosan.entity.DepositStatus;
 import com.tosan.entity.TransactionType;
 import com.tosan.entity.TsTransaction;
+import com.tosan.exceptions.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Repository
 public class MyDepositRepositoryImpl {
@@ -27,9 +31,23 @@ public class MyDepositRepositoryImpl {
         return query.getResultList();
     }
 
-    @Transactional
-    public Deposit saveDeposit(Deposit deposit) {
-        em.persist(deposit);
+    @Transactional(rollbackFor = {CustomInvalidInputException.class, DuplicateDepositException.class})
+    public Deposit saveDeposit(Deposit deposit) throws CustomInvalidInputException, DuplicateDepositException {
+        try {
+            em.persist(deposit);
+            return deposit;
+        } catch(PersistenceException ex) {
+            if(ex.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+                ((org.hibernate.exception.ConstraintViolationException) ex.getCause()).getConstraintName();//constraintViolationException.getConstraintName();
+                throw new DuplicateDepositException("There's a deposit with this depositNumber.");
+            }
+            System.out.println(ex.getMessage());
+        } catch(ConstraintViolationException ex) {
+            List<String> messages = ex.getConstraintViolations().stream().map(cv ->
+                    cv.getPropertyPath().toString() + " " + cv.getMessage()
+            ).collect(Collectors.toList());
+            throw new CustomInvalidInputException("Some parameters are invalid", messages);
+        }
         return deposit;
     }
 
@@ -107,13 +125,15 @@ public class MyDepositRepositoryImpl {
         return tsTransaction;
     }
 
-    @Transactional
-    public TsTransaction deposit(Long depositId, Long amount) {
+    @Transactional(rollbackFor = { DepositBlockedException.class, InsufficientBalanceException.class, TransactionFailedException.class})
+    public TsTransaction deposit(Long depositId, Long amount) throws DepositBlockedException, InsufficientBalanceException, TransactionFailedException {
         TsTransaction tsTransaction = new TsTransaction();
         Deposit deposit = em.find(Deposit.class, depositId);
         if(deposit.getDepositStatus() != DepositStatus.OPEN && deposit.getDepositStatus() != DepositStatus.WITHRAW_BLOCKED) {
-            tsTransaction.setSucceed(false);
-            tsTransaction.setDescription("Deposit is blocked!");
+            throw new DepositBlockedException();
+        }
+        if(deposit.getBalance() < amount) {
+            throw new InsufficientBalanceException();
         } else {
             String queryStr = "update Deposit d set d.balance = d.balance + :amount where d.did = :did ";
             //" and d.balance >= :amount and (d.depositStatus = :open_status or d.depositStatus = :withraw_blocked_status)";
@@ -121,10 +141,12 @@ public class MyDepositRepositoryImpl {
             query.setParameter("did", depositId);
             query.setParameter("amount", amount);
             int count = query.executeUpdate();
-            tsTransaction.setSucceed(count > 0);
-            tsTransaction.setDescription(count > 0 ? "transaction succeeded!": "transaction failed!");
+            if(count == 0) {
+                throw new TransactionFailedException();
+            }
         }
-
+        tsTransaction.setSucceed(true);
+        tsTransaction.setDescription("transaction succeeded!");
         tsTransaction.setSourceId(depositId);
         tsTransaction.setAmount(amount);
         tsTransaction.setTransactionType(TransactionType.DEPOSIT);
